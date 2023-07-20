@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: atp-user-inquiry
+  labels:
+    app.kubernetes.io/name: atp-user-inquiry
+    app.kubernetes.io/instance: atp-user-inquiry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: atp-user-inquiry
+      app.kubernetes.io/instance: atp-user-inquiry
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: atp-user-inquiry
+        app.kubernetes.io/instance: atp-user-inquiry
+    spec:
+      containers:
+        - name: atp-user-inquiry
+          image: asia.gcr.io/poc-innovation-iot/atp-user-inquiry:TAG
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: atp-user-inquiry-secret-env
+          volumeMounts:
+              - mountPath: /config/config.yaml
+                name: atp-user-inquiry-configmap-file
+                subPath: config.yaml
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            timeoutSeconds: 10
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            timeoutSeconds: 10
+            initialDelaySeconds: 10
+          resources:
+            limits:
+              cpu: 64m
+              memory: 64Mi
+            requests:
+              cpu: 32m
+              memory: 32Mi
+      volumes:
+        - name: atp-user-inquiry-secret-file
+          secret:
+            secretName: atp-user-inquiry-secret-file
+        - name: atp-user-inquiry-configmap-file
+          configMap:
+            name: atp-user-inquiry-configmap-file
