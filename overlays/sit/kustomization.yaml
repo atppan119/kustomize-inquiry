@@ -6,7 +6,7 @@ resources:
 
 images:
 - name: asia.gcr.io/poc-innovation-iot/atp-user-inquiry
-  newTag: 103eda26
+  newTag: 366695bc
 
 
 configMapGenerator:
